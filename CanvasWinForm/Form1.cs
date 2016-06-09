@@ -15,6 +15,8 @@ namespace CanvasWinForm
         public Form1()
         {
             InitializeComponent();
+            DataTable dt= Canvas_DB.getNewOrders();
+            gridOrders.DataSource = dt.DefaultView;
         }
     }
 }
