@@ -11,9 +11,43 @@ namespace CanvasWinForm
 {
     class Canvas_DB
     {
+        public static string insert_ALL(string eMail, string phone, string address, string fullName, string city, int zip, int POB,
+         int amount, int pattern, int delivery, DataTable dtPictures, DataTable dtTexts)
+        {
+            SqlConnection con = new SqlConnection();
+            SqlCommand cmd = new SqlCommand();
+            con.ConnectionString = ConfigurationManager.ConnectionStrings["Canvas_DB"].ToString();
+            cmd.Connection = con;
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.CommandText = "Canvas_DB_Insert_ALL";
+            cmd.Parameters.Add(new SqlParameter("@EMail", eMail));
+            cmd.Parameters.Add(new SqlParameter("@Phone", phone));
+            cmd.Parameters.Add(new SqlParameter("@Address", address));
+            cmd.Parameters.Add(new SqlParameter("@FullName", fullName));
+            cmd.Parameters.Add(new SqlParameter("@City", city));
+            cmd.Parameters.Add(new SqlParameter("@Zip", zip));
+            cmd.Parameters.Add(new SqlParameter("@POB", POB));
+
+            cmd.Parameters.Add(new SqlParameter("@OrderDate", DateTime.Now));
+            cmd.Parameters.Add(new SqlParameter("@Amount", amount));
+            cmd.Parameters.Add(new SqlParameter("@Pattern", pattern));
+            cmd.Parameters.Add(new SqlParameter("@Delivery", delivery));
+
+            cmd.Parameters.Add(new SqlParameter("@Pictures_Tbl", dtPictures));
+
+            cmd.Parameters.Add(new SqlParameter("@Texts_Tbl", dtTexts));
+
+            con.Open();
+            string res = cmd.ExecuteScalar().ToString();
+            con.Close();
+            return res;
+        }
+
+
 
         public static DataTable getNewOrders()
-        {           
+        {
             SqlConnection con = new SqlConnection();
             SqlCommand cmd = new SqlCommand();
             con.ConnectionString = ConfigurationManager.ConnectionStrings["Canvas_DB"].ConnectionString;
@@ -24,7 +58,13 @@ namespace CanvasWinForm
             DataTable dt = new DataTable();
             sda.Fill(dt);
             con.Close();
-            return dt;
+            if (dt != null)
+                return dt;
+            else
+            {
+                dt.NewRow();
+                return dt;
+            }
         }
 
         public static DataTable getClient(int orderID)
@@ -75,7 +115,7 @@ namespace CanvasWinForm
             return dt;
         }
 
-        public static void updateOrderStatus(int orderID)
+        public static void updateOrderStatus(int orderID, int status)
         {
             SqlConnection con = new SqlConnection();
             SqlCommand cmd = new SqlCommand();
@@ -84,9 +124,34 @@ namespace CanvasWinForm
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.CommandText = "Canvas_DB_Update_Order_Status";
             cmd.Parameters.Add(new SqlParameter("@OrderID", orderID));
+            cmd.Parameters.Add(new SqlParameter("@Status", status));
             con.Open();
             cmd.ExecuteNonQuery();
             con.Close();
         }
+
+        //public static int insertPicture(int ord_ID, string fileName, byte[] fileBody, int fileSize, float size, int top, int left, float angle)
+        //{
+        //    SqlConnection con = new SqlConnection();
+        //    SqlCommand cmd = new SqlCommand();
+        //    con.ConnectionString = "Data Source=DESKTOP-BUV55UA; Initial Catalog=Canvas_DB; Integrated Security=true; ";
+        //    cmd.Connection = con;
+        //    cmd.CommandType = CommandType.StoredProcedure;
+
+        //    cmd.CommandText = "Canvas_DB_Picture_Insert";
+        //    cmd.Parameters.Add(new SqlParameter("@OrderID", ord_ID));
+        //    cmd.Parameters.Add(new SqlParameter("@FileName", fileName));
+        //    cmd.Parameters.Add(new SqlParameter("@FileBody", fileBody));
+        //    cmd.Parameters.Add(new SqlParameter("@FileSize", fileSize));
+        //    cmd.Parameters.Add(new SqlParameter("@Size", size));
+        //    cmd.Parameters.Add(new SqlParameter("@Top", top));
+        //    cmd.Parameters.Add(new SqlParameter("@Left", left));
+        //    cmd.Parameters.Add(new SqlParameter("@Angle", angle));
+
+        //    con.Open();
+        //    int res = Convert.ToInt32(cmd.ExecuteScalar().ToString());
+        //    con.Close();
+        //    return res;
+        //}
     }
 }
