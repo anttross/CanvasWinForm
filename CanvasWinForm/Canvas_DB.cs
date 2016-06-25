@@ -129,7 +129,7 @@ namespace CanvasWinForm
             cmd.ExecuteNonQuery();
             con.Close();
         }
-
+        //#region manual picture
         //public static int insertPicture(int ord_ID, string fileName, byte[] fileBody, int fileSize, float size, int top, int left, float angle)
         //{
         //    SqlConnection con = new SqlConnection();
@@ -153,5 +153,6 @@ namespace CanvasWinForm
         //    con.Close();
         //    return res;
         //}
+        //#endregion
     }
 }
